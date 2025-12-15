@@ -100,3 +100,29 @@ export const updateBlog = TryCatch(async (req: AuthenticatedRequest, res) => {
     blog: updatedBlog[0],
   });
 });
+
+export const deleteBlog = TryCatch(async (req: AuthenticatedRequest, res) => {
+  const blog = await sql`SELECT * FROM blogs WHERE id = ${req.params.id}`;
+
+  if (!blog.length) {
+    res.status(404).json({
+      message: "No blog with this id",
+    });
+    return;
+  }
+
+  if (blog[0].author !== req.user?._id) {
+    res.status(401).json({
+      message: "You are not author of this blog",
+    });
+    return;
+  }
+
+  await sql`DELETE FROM savedblogs WHERE blogid = ${req.params.id}`;
+  await sql`DELETE FROM comments WHERE blogid = ${req.params.id}`;
+  await sql`DELETE FROM blogs WHERE id = ${req.params.id}`;
+
+  res.json({
+    message: "Blog Delete",
+  });
+});
