@@ -7,6 +7,8 @@ dotenv.config();
 
 const app = express();
 
+app.use(express.json());
+
 connectDb();
 
 app.use("/api/v1", userRoutes);
