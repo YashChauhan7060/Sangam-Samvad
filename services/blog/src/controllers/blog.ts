@@ -1,3 +1,4 @@
+import { redisClient } from "../server";
 import { sql } from "../utils/db";
 import TryCatch from "../utils/TryCatch";
 import axios from "axios"; 
@@ -5,8 +6,18 @@ import axios from "axios";
 export const getAllBlogs = TryCatch(async (req, res) => {
   const { searchQuery = "", category = "" } = req.query;
 
+  const cacheKey = `blogs:${searchQuery}:${category}`;
 
   let blogs;
+
+  const cached = await redisClient.get(cacheKey);
+
+  if (cached) {
+    console.log("Serving from Redis cache");
+    res.json(JSON.parse(cached));
+    return;
+  }
+
 
   if (searchQuery && category) {
     blogs = await sql`SELECT * FROM blogs WHERE (title ILIKE ${
@@ -27,6 +38,7 @@ export const getAllBlogs = TryCatch(async (req, res) => {
 
   console.log("Serving from db");
 
+  await redisClient.set(cacheKey, JSON.stringify(blogs), { EX: 3600 });
 
   res.json(blogs);
 });
@@ -36,6 +48,15 @@ export const getSingleBlog = TryCatch(async (req, res) => {
   const blogid = req.params.id;
 
 
+  const cacheKey = `blog:${blogid}`;
+
+  const cached = await redisClient.get(cacheKey);
+
+  if (cached) {
+    console.log("Serving single blog from Redis cache");
+    res.json(JSON.parse(cached));
+    return;
+  }
 
   const blog = await sql`SELECT * FROM blogs WHERE id = ${blogid}`;
 
@@ -52,6 +73,7 @@ export const getSingleBlog = TryCatch(async (req, res) => {
 
   const responseData = { blog: blog[0], author: data };
 
+  await redisClient.set(cacheKey, JSON.stringify(responseData), { EX: 3600 });
 
   res.json(responseData);
 });
