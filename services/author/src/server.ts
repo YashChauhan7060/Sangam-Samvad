@@ -3,7 +3,8 @@ import dotenv from "dotenv";
 import { sql } from "./utils/db.js";
 import blogRoutes from "./routes/blog.js";
 import { v2 as cloudinary } from "cloudinary";
-
+import { connectRabbitMQ } from "./utils/rabbitmq.js";
+import cors from "cors";
 
 dotenv.config();
 
@@ -14,6 +15,12 @@ cloudinary.config({
 });
 
 const app = express();
+
+app.use(express.json());
+
+app.use(cors());
+
+connectRabbitMQ();
 
 const port = process.env.PORT;
 
