@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
-import { Button } from "./ui/button";
 import { CircleUserRoundIcon, LogIn, Menu, X } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useAppData } from "../context/AppContext";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);

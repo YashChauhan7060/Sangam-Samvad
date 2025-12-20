@@ -1,6 +1,6 @@
 "use client";
 import React from 'react'
-import { Button } from '@/src/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { 
     Card,
   CardAction,
@@ -8,7 +8,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/src/components/ui/card'
+} from '@/components/ui/card'
 import { useAppData, user_service } from '@/src/context/AppContext';
 import axios from "axios";
 import Cookies from "js-cookie";

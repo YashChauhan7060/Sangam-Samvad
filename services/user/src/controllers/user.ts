@@ -7,6 +7,8 @@ import getBuffer from "../utils/dataUri.js";
 import { v2 as cloudinary } from "cloudinary";
 import { oauth2client } from "../utils/GoogleConfig.js";
 import axios from "axios";
+import { GoogleGenAI } from "@google/genai";
+
 
 
 export const loginUser = TryCatch(async (req, res) => {

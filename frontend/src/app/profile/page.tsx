@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { redirect, useRouter } from "next/navigation";
 import Loading from "@/src/components/loading";
-import { Button } from "@/src/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useAppData ,user_service } from "@/src/context/AppContext";
 
 const ProfilePage = () => {

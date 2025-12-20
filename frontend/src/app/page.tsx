@@ -1,5 +1,5 @@
 "use client";
-import { Button } from '@/src/components/ui/button'
+import { Button } from '@/components/ui/button'
 import React from 'react'
 import { useAppData } from '../context/AppContext';
 import Loading from '../components/loading';
