@@ -89,3 +89,17 @@ export const getSingleBlog = TryCatch(async (req, res) => {
 
   res.json(responseData);
 });
+
+
+export const getSavedBlogs = TryCatch(async (req: any, res) => {
+  // This requires the 'isAuth' middleware to be used in the router
+  // so that req.user is populated.
+  const userId = req.user._id;
+
+  const saved = await sql`
+    SELECT * FROM savedblogs 
+    WHERE userid = ${userId}
+  `;
+
+  res.json(saved);
+});
