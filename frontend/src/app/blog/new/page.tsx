@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,16 +15,10 @@ import React, { useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Cookies from "js-cookie";
 import axios from "axios";
-import {
-  author_service,
-  blogCategories,
-  useAppData,
-} from "@/src/context/AppContext";
 import toast from "react-hot-toast";
-import { Button } from "@/components/ui/button";
+import { author_service, blogCategories, useAppData } from "@/src/context/AppContext";
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
-
 
 const AddBlog = () => {
   const editor = useRef(null);
@@ -89,7 +84,8 @@ const AddBlog = () => {
         fetchBlogs();
       }, 4000);
     } catch (error) {
-      toast.error("Error while adding blog");
+      console.log(error);
+      toast.error("Error while adding blog",error);
     } finally {
       setLoading(false);
     }

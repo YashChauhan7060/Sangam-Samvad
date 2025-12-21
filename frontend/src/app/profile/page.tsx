@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Facebook, Instagram, Linkedin } from "lucide-react";
-
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -17,9 +17,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { redirect, useRouter } from "next/navigation";
+import { useAppData, user_service } from "@/src/context/AppContext";
 import Loading from "@/src/components/loading";
-import { Button } from "@/components/ui/button";
-import { useAppData ,user_service } from "@/src/context/AppContext";
 
 const ProfilePage = () => {
   const { user, setUser, logoutUser } = useAppData();
@@ -110,7 +109,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen p-3 w-full">
+    <div className="flex justify-center items-center min-h-screen p-4 w-full">
       {loading ? (
         <Loading />
       ) : (

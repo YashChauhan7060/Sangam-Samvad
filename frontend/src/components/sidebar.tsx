@@ -9,7 +9,7 @@ import { SidebarMenuItem } from "./ui/sidebar";
 const SideBar = () => {
   const { searchQuery, setSearchQuery, setCategory } = useAppData();
   return (
-    <Sidebar>
+    <Sidebar className="w-69">
       <SidebarHeader className="bg-white text-2xl font-bold mt-5">
         The Reading Retreat
       </SidebarHeader>
