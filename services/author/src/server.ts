@@ -5,8 +5,14 @@ import blogRoutes from "./routes/blog.js";
 import { v2 as cloudinary } from "cloudinary";
 import { connectRabbitMQ } from "./utils/rabbitmq.js";
 import cors from "cors";
-
 dotenv.config();
+
+
+import { createClient } from "redis";
+
+const statsRedis = createClient({ url: process.env.REDIS_URL });
+statsRedis.connect().catch(console.error);
+
 
 cloudinary.config({
   cloud_name: process.env.Cloud_Name,
@@ -66,6 +72,22 @@ async function initDB() {
 }
 
 app.use("/api/v1", blogRoutes);
+
+
+app.get("/api/v1/admin/stats", async (req, res) => {
+  try {
+    const keys = await statsRedis.keys("*:author-service:*");
+    const stats = await Promise.all(
+      keys.map(async (key) => ({
+        key,
+        value: await statsRedis.get(key),
+      }))
+    );
+    res.json(stats);
+  } catch (error) {
+    res.status(500).json({ error: "Could not fetch stats" });
+  }
+});
 
 
 initDB().then(() => {

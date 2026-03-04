@@ -42,13 +42,44 @@ export const getAllBlogs = TryCatch(async (req, res) => {
   res.json(blogs);
 });
 
+// export const getSingleBlog = TryCatch(async (req, res) => {
+//   const blogid = req.params.id;
+
+//   const cacheKey = `blog:${blogid}`;
+
+//   const cached = await redisClient.get(cacheKey);
+
+//   if (cached) {
+//     console.log("Serving single blog from Redis cache");
+//     res.json(JSON.parse(cached));
+//     return;
+//   }
+
+//   const blog = await sql`SELECT * FROM blogs WHERE id = ${blogid}`;
+
+//   if (blog.length === 0) {
+//     res.status(404).json({
+//       message: "no blog with this id",
+//     });
+//     return;
+//   }
+
+//   const { data } = await axios.get(
+//     `${process.env.USER_SERVICE}/api/v1/user/${blog[0].author}`
+//   );
+
+//   const responseData = { blog: blog[0], author: data };
+
+//   await redisClient.set(cacheKey, JSON.stringify(responseData), { EX: 3600 });
+
+//   res.json(responseData);
+// });
+
 export const getSingleBlog = TryCatch(async (req, res) => {
   const blogid = req.params.id;
-
   const cacheKey = `blog:${blogid}`;
 
   const cached = await redisClient.get(cacheKey);
-
   if (cached) {
     console.log("Serving single blog from Redis cache");
     res.json(JSON.parse(cached));
@@ -58,22 +89,30 @@ export const getSingleBlog = TryCatch(async (req, res) => {
   const blog = await sql`SELECT * FROM blogs WHERE id = ${blogid}`;
 
   if (blog.length === 0) {
-    res.status(404).json({
-      message: "no blog with this id",
-    });
+    res.status(404).json({ message: "no blog with this id" });
     return;
   }
 
-  const { data } = await axios.get(
-    `${process.env.USER_SERVICE}/api/v1/user/${blog[0].author}`
-  );
+  // ✅ Don't let user service failure crash the blog response
+  let author = null;
+  try {
+    const { data } = await axios.get(
+      `${process.env.USER_SERVICE}/api/v1/user/${blog[0].author}`
+    );
+    author = data;
+  } catch (err) {
+    console.warn("Could not fetch author from user service:", err.message);
+    // author stays null — blog still returns
+  }
 
-  const responseData = { blog: blog[0], author: data };
+  const responseData = { blog: blog[0], author };
 
   await redisClient.set(cacheKey, JSON.stringify(responseData), { EX: 3600 });
 
   res.json(responseData);
 });
+
+
 
 export const addComment = TryCatch(async (req: AuthenticatedRequest, res) => {
   const { id: blogid } = req.params;

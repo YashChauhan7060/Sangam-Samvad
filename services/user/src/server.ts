@@ -4,8 +4,15 @@ import connectDb from "./utils/db.js";
 import userRoutes from "./routes/user.js";
 import { v2 as cloudinary } from 'cloudinary';
 import cors from "cors";
-
 dotenv.config();
+
+import { createClient } from "redis";
+
+const statsRedis = createClient({ url: process.env.REDIS_URL });
+statsRedis.connect().catch(console.error);
+
+
+
 
 cloudinary.config({
   cloud_name: process.env.Cloud_Name,
@@ -34,6 +41,22 @@ connectDb();
 app.use("/api/v1", userRoutes);
 
 const port = process.env.PORT;
+
+app.get("/api/v1/admin/stats", async (req, res) => {
+  try {
+    const keys = await statsRedis.keys("*:user-service:*");
+    const stats = await Promise.all(
+      keys.map(async (key) => ({
+        key,
+        value: await statsRedis.get(key),
+      }))
+    );
+    res.json(stats);
+  } catch (error) {
+    res.status(500).json({ error: "Could not fetch stats" });
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

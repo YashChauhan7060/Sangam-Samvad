@@ -33,6 +33,23 @@ redisClient
 
 app.use("/api/v1",blogRoutes);
 
+// Admin stats endpoint - add before app.listen
+app.get("/api/v1/admin/stats", async (req, res) => {
+  try {
+    const keys = await redisClient.keys("*:blog-service:*");
+    const stats = await Promise.all(
+      keys.map(async (key) => ({
+        key,
+        value: await redisClient.get(key),
+      }))
+    );
+    res.json(stats);
+  } catch (error) {
+    res.status(500).json({ error: "Could not fetch stats" });
+  }
+});
+
+
 app.listen(port,()=>{
     console.log(`Server is running on http://localhost:${port}`);
 });

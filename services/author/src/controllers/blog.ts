@@ -274,7 +274,13 @@ export const aiTitleResponse = TryCatch(async (req, res) => {
 
   // FIX: Use the standard GoogleGenerativeAI library and stable model
   const ai = new GoogleGenerativeAI(process.env.Gemini_Api_Key! as string);
-  const model = ai.getGenerativeModel({ model: "gemini-1.5-flash-001" });
+  // const model = ai.getGenerativeModel({ model: "gemini-1.5-flash-001" });
+      const model = ai.getGenerativeModel({ 
+        model: "gemini-2.5-flash", 
+        generationConfig: { temperature: 0.3 } 
+    });
+
+
 
   const result = await model.generateContent(prompt);
   const response = await result.response;
@@ -296,6 +302,9 @@ export const aiTitleResponse = TryCatch(async (req, res) => {
   res.json(cleanText);
 });
 
+
+
+
 export const aiDescriptionResponse = TryCatch(async (req, res) => {
   const { title, description } = req.body;
 
@@ -309,7 +318,12 @@ following blog description and return only the corrected sentence. Do not add an
 
   // FIX: Use the standard GoogleGenerativeAI library and stable model
   const ai = new GoogleGenerativeAI(process.env.Gemini_Api_Key! as string);
-  const model = ai.getGenerativeModel({ model: "gemini-1.5-flash-001" });
+  // const model = ai.getGenerativeModel({  model: "gemini-2.5-flash" });
+      const model = ai.getGenerativeModel({ 
+        model: "gemini-2.5-flash", 
+        generationConfig: { temperature: 0.3 } 
+    });
+
 
   const result = await model.generateContent(prompt);
   const response = await result.response;
@@ -348,7 +362,12 @@ image tags, line breaks, and structural tags exactly as they are. Return the ful
   const fullMessage = `${prompt}\n\n${blog}`;
 
   const ai = new GoogleGenerativeAI(process.env.Gemini_Api_Key! as string);
-  const model = ai.getGenerativeModel({ model: "gemini-1.5-pro" });
+  // const model = ai.getGenerativeModel({ model: "gemini-1.5-pro" });
+      const model = ai.getGenerativeModel({ 
+        model: "gemini-2.5-flash", 
+        generationConfig: { temperature: 0.3 } 
+    });
+
 
   const result = await model.generateContent(fullMessage);
   const response = await result.response;
