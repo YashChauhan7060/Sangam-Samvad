@@ -100,7 +100,7 @@ const EditBlogPage = () => {
 
     try {
       const token = Cookies.get("token");
-      const { data } = await axios.post(
+      const { data } = await axios.put(
         `${author_service}/api/v1/blog/${id}`,
         fromDataToSend,
         {
