@@ -42,7 +42,7 @@ const BlogPage = () => {
     try {
       setLoading(true);
       const { data } = await axios.get(`${blog_service}/api/v1/comment/${id}`);
-      setComments(data);
+      setComments(data as Comment[]);
     } catch (error) {
       console.log(error);
     } finally {
